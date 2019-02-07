@@ -18,12 +18,30 @@ TestPRBS.py
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
 import sys
+import os
 import unittest
 import SignalIntegrity.Lib as si
 
-class TestPRBSTest(unittest.TestCase):
+class TestPRBSTest(unittest.TestCase,si.test.SignalIntegrityAppTestHelper):
+    def __init__(self, methodName='runTest'):
+        unittest.TestCase.__init__(self,methodName)
+        si.test.SignalIntegrityAppTestHelper.__init__(self,os.path.dirname(os.path.realpath(__file__)))
+    def NameForTest(self):
+        return '_'.join(self.id().split('.')[-2:])
     def testPRBS7(self):
         prbs7Calc=si.prbs.PseudoRandomBitPattern(si.prbs.PseudoRandomBitPattern.Prbs7Polynomial()).Pattern()
         with open('prbs7.txt','rU' if sys.version_info.major < 3 else 'r') as f:
             prbs7Regression=[int(e) for e in f.readline().split()]
         self.assertEqual(prbs7Calc, prbs7Regression, 'prbs 7 failed')
+    def testPRBS7Waveform(self):
+        wf=si.prbs.PseudoRandomBitPattern(si.prbs.PseudoRandomBitPattern.Prbs7Polynomial()).PseudoRandomWaveform(300e-12,1e-9,100)
+        self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
+    def testPRBS9Waveform(self):
+        wf=si.prbs.PseudoRandomBitPattern(si.prbs.PseudoRandomBitPattern.Prbs9Polynomial()).PseudoRandomWaveform(300e-12,1e-9,100)
+        self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
+    def testPRBS11Waveform(self):
+        wf=si.prbs.PseudoRandomBitPattern(si.prbs.PseudoRandomBitPattern.Prbs11Polynomial()).PseudoRandomWaveform(300e-12,1e-9,10)
+        self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
+
+if __name__ == "__main__":
+    unittest.main()

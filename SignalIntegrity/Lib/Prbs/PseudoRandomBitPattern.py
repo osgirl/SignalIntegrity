@@ -18,9 +18,11 @@
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
 import math
+from SignalIntegrity.Lib.TimeDomain.Waveform.Waveform import Waveform
+from SignalIntegrity.Lib.TimeDomain.Waveform.TimeDescriptor import TimeDescriptor
 
 class PseudoRandomBitPattern(object):
-    rtvsT=59.03445
+    rtvsT=0.5903445
     """generates pseudo-random bit sequences"""
     def __init__(self,polynomial):
         """constructor
@@ -47,13 +49,49 @@ class PseudoRandomBitPattern(object):
     @staticmethod
     def Prbs7Polynomial():
         """the prbs 7 polynomial
-        @return The prbs7 polynomial 1 + x + x^7
+        @return The prbs7 polynomial 1 + x^6 + x^7
         """
         return [1,1,0,0,0,0,0,1]
     @staticmethod
-    def RaiseCosine(t,T):
+    def Prbs9Polynomial():
+        return [1,0,0,0,1,0,0,0,0,1]
+    @staticmethod
+    def Prbs11Polynomial():
+        return [1,0,1,0,0,0,0,0,0,0,0,1]
+    @staticmethod
+    def Prbs15Polynomial():
+        return [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+    @staticmethod
+    def Prbs20Polynomial():
+        return [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1]
+    @staticmethod
+    def Prbs23Polynomial():
+        return [1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+    @staticmethod
+    def Prbs31Polynomial():
+        return [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+    @staticmethod
+    def RaisedCosine(t,T):
         """raised cosine
         @return the value of a raised cosine edge that is zero for t<0 and 1 for t>T.
         @remark the risetime of this edge is 59% of the value of T
         """
-        return 1./2-1./2*math.cos(math.pi*t/T)
+        if t < 0:
+            return 0.
+        elif t > T:
+            return 1.
+        else:
+            return 1./2-1./2*math.cos(math.pi*t/T)
+    def UnitPulse(self,t,risetime,unitInterval):
+        T=risetime/self.rtvsT
+        return self.RaisedCosine(t-T/2,T)-self.RaisedCosine(t-T/2-unitInterval,T)
+    def UnitPulseWaveform(self,td,risetime,unitInterval):
+        return Waveform(td,[self.UnitPulse(t,risetime,unitInterval) for t in td])
+    def PseudoRandomWaveform(self,risetime,unitInterval,samplesPerUI):
+        pattern=self.Pattern()
+        numPoints=len(pattern)*samplesPerUI
+        sampleRate=samplesPerUI/unitInterval
+        td=TimeDescriptor(0.,numPoints,sampleRate)
+        timeLength=numPoints/sampleRate
+        return Waveform(td,[sum([(self.UnitPulse((td[k]-(i-1)*unitInterval)%timeLength,risetime,unitInterval)-0.5)*pattern[i]
+            for i in range(len(pattern))]) for k in range(len(td))])+sum(pattern)/2
