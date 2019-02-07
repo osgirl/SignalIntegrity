@@ -87,7 +87,12 @@ class PseudoRandomBitPattern(object):
         return self.RaisedCosine(t-T/2,T)-self.RaisedCosine(t-T/2-unitInterval,T)
     def UnitPulseWaveform(self,td,risetime,unitInterval):
         return Waveform(td,[self.UnitPulse(t,risetime,unitInterval) for t in td])
-    def PseudoRandomWaveform(self,risetime,unitInterval,samplesPerUI):
+    def TimeDescriptor(self,bitRate,sampleRate):
+        bits=2**(len(self.polynomial)-1)-1
+        timeLength=bits/bitRate
+        numPoints=int(math.floor(timeLength*sampleRate+0.5))
+        return TimeDescriptor(0.,numPoints,sampleRate)
+    def PseudoRandomWaveformFull(self,risetime,unitInterval,samplesPerUI):
         pattern=self.Pattern()
         numPoints=len(pattern)*samplesPerUI
         sampleRate=samplesPerUI/unitInterval
@@ -95,3 +100,11 @@ class PseudoRandomBitPattern(object):
         timeLength=numPoints/sampleRate
         return Waveform(td,[sum([(self.UnitPulse((td[k]-(i-1)*unitInterval)%timeLength,risetime,unitInterval)-0.5)*pattern[i]
             for i in range(len(pattern))]) for k in range(len(td))])+sum(pattern)/2
+    def PseudoRandomWaveform(self,td,risetime,bitRate):
+        pattern=self.Pattern()
+        sampleRate=td.Fs
+        patternTimeLength=len(pattern)/bitRate
+        unitInterval=1./bitRate
+        return Waveform(td,[sum([(self.UnitPulse((td[k]-(i-1)*unitInterval)%patternTimeLength,risetime,unitInterval)-0.5)*pattern[i]
+            for i in range(len(pattern))]) for k in range(len(td))])+sum(pattern)/2
+        
