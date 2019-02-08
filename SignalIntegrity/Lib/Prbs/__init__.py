@@ -18,4 +18,6 @@ from __future__ import absolute_import
 #
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>
-from .PseudoRandomBitPattern import PseudoRandomBitPattern
+from .PseudoRandomPolynomial import PseudoRandomPolynomial,Prbs7Polynomial,Prbs9Polynomial,Prbs11Polynomial,Prbs15Polynomial,Prbs20Polynomial,Prbs23Polynomial,Prbs31Polynomial
+from .PseudoRandomBitPattern import PseudoRandomBitPattern,BitPattern
+from .PseudoRandomWaveform import PseudoRandomWaveform,SerialDataWaveform
