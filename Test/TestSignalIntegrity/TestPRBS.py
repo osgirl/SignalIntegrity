@@ -29,7 +29,7 @@ class TestPRBSTest(unittest.TestCase,si.test.SignalIntegrityAppTestHelper):
     def NameForTest(self):
         return '_'.join(self.id().split('.')[-2:])
     def testPRBS7(self):
-        prbs7Calc=si.prbs.PseudoRandomBitPattern(si.prbs.Prbs7Polynomial())
+        prbs7Calc=si.prbs.PseudoRandomBitPattern(7)
         with open('prbs7.txt','rU' if sys.version_info.major < 3 else 'r') as f:
             prbs7Regression=[int(e) for e in f.readline().split()]
         self.assertEqual(prbs7Calc, prbs7Regression, 'prbs 7 failed')
@@ -37,19 +37,22 @@ class TestPRBSTest(unittest.TestCase,si.test.SignalIntegrityAppTestHelper):
         risetime=300e-12
         bitrate=1e9
         samplesPerUI=100
-        wf=si.prbs.PseudoRandomWaveform(si.prbs.Prbs7Polynomial(),bitrate,risetime,bitrate*samplesPerUI)
+        amplitude=0.5
+        wf=si.prbs.PseudoRandomWaveform(7,bitrate,amplitude,risetime,bitrate*samplesPerUI)
         self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
     def testPRBS9Waveform(self):
         risetime=300e-12
         bitrate=1e9
         samplesPerUI=10
-        wf=si.prbs.PseudoRandomWaveform(si.prbs.Prbs9Polynomial(),bitrate,risetime,bitrate*samplesPerUI)
+        amplitude=0.5
+        wf=si.prbs.PseudoRandomWaveform(9,bitrate,amplitude,risetime,bitrate*samplesPerUI)
         self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
     def testPRBS11Waveform(self):
         risetime=300e-12
         bitrate=1e9
         samplesPerUI=10
-        wf=si.prbs.PseudoRandomWaveform(si.prbs.Prbs11Polynomial(),bitrate,risetime,bitrate*samplesPerUI)
+        amplitude=0.5
+        wf=si.prbs.PseudoRandomWaveform(11,bitrate,amplitude,risetime,bitrate*samplesPerUI)
         self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
 
 if __name__ == "__main__":
