@@ -50,7 +50,7 @@ class SerialDataWaveform(Waveform):
         @remark the risetime of this edge is 59% of the value of T
         """
         if t < 0: return 0.
-        elif t > T: return 1.
+        elif t >= T: return 1.
         else: return 1./2-1./2*math.cos(math.pi*t/T)
     def UnitPulse(self,t,risetime,unitInterval):
         T=risetime/self.rtvsT
