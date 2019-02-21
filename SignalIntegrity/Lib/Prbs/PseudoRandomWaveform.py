@@ -24,7 +24,7 @@ from SignalIntegrity.Lib.Prbs.PseudoRandomBitPattern import PseudoRandomBitPatte
 
 class SerialDataWaveform(Waveform):
     rtvsT=0.5903445
-    def __init__(self,pattern,bitRate,amplitude=1.0,risetime=0.,tdOrFs=None):
+    def __init__(self,pattern,bitRate,amplitude=1.0,risetime=0.,delay=0.,tdOrFs=None):
         if tdOrFs is None:
             sampleRate=10.*bitRate
             td=self.TimeDescriptor(bitRate, sampleRate, len(pattern))
@@ -35,7 +35,7 @@ class SerialDataWaveform(Waveform):
             td=tdOrFs
         patternTimeLength=len(pattern)/bitRate
         unitInterval=1./bitRate
-        wf=(Waveform(td,[sum([(self.UnitPulse((td[k]-(i-1)*unitInterval)%patternTimeLength,risetime,unitInterval)-0.5)*pattern[i]
+        wf=(Waveform(td,[sum([(self.UnitPulse((td[k]-delay-(i-1)*unitInterval)%patternTimeLength,risetime,unitInterval)-0.5)*pattern[i]
             for i in range(len(pattern))]) for k in range(len(td))])+(float(sum(pattern))/2-0.5))*(2.*amplitude)
         Waveform.__init__(self,wf)
     @staticmethod
@@ -57,5 +57,5 @@ class SerialDataWaveform(Waveform):
         return self.RaisedCosine(t-T/2,T)-self.RaisedCosine(t-T/2-unitInterval,T)
 
 class PseudoRandomWaveform(SerialDataWaveform):
-    def __init__(self,polynomial,bitrate,amplitude=1.0,risetime=0.,tdOrFs=None):
-        SerialDataWaveform.__init__(self,PseudoRandomBitPattern(polynomial),bitrate,amplitude,risetime,tdOrFs)            
+    def __init__(self,polynomial,bitrate,amplitude=1.0,risetime=0.,delay=0.,tdOrFs=None):
+        SerialDataWaveform.__init__(self,PseudoRandomBitPattern(polynomial),bitrate,amplitude,risetime,delay,tdOrFs)

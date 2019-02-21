@@ -105,7 +105,8 @@ class Device(object):
                 bitrate=float(self['br'].GetValue())
                 risetime=float(self['rt'].GetValue())
                 amplitude=float(self['a'].GetValue())
-                waveform = si.prbs.PseudoRandomWaveform(polynomial,bitrate,amplitude,risetime,self.WaveformTimeDescriptor())
+                delay=float(self['t0'].GetValue())
+                waveform = si.prbs.PseudoRandomWaveform(polynomial,bitrate,amplitude,risetime,delay,self.WaveformTimeDescriptor())
             elif wfType == 'sine':
                 amplitude=float(self['a'].GetValue())
                 frequency=float(self['f'].GetValue())
@@ -241,7 +242,7 @@ class DeviceVoltagePRBSGenerator(Device):
     def __init__(self,propertiesList,partPicture):
         netlist=DeviceNetListLine(devicename='voltagesource')
         Device.__init__(self,netlist,[PartPropertyCategory('Generators'),PartPropertyPartName('Voltage PRBS Generator'),PartPropertyDefaultReferenceDesignator('VG?'),
-        PartPropertyHorizontalOffset(),PartPropertyDuration(),PartPropertyBitRate(),PartPropertyRisetime(),PartPropertyPRBSPolynomial(),PartPropertySampleRate(),PartPropertyVoltageAmplitude(),PartPropertyWaveformType('prbs')]+propertiesList,partPicture)
+        PartPropertyHorizontalOffset(),PartPropertyDuration(),PartPropertyStartTime(),PartPropertyBitRate(),PartPropertyRisetime(),PartPropertyPRBSPolynomial(),PartPropertySampleRate(),PartPropertyVoltageAmplitude(),PartPropertyWaveformType('prbs')]+propertiesList,partPicture)
 
 class DeviceVoltageSineGenerator(Device):
     def __init__(self,propertiesList,partPicture):

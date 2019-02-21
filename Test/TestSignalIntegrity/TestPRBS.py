@@ -38,21 +38,24 @@ class TestPRBSTest(unittest.TestCase,si.test.SignalIntegrityAppTestHelper):
         bitrate=1e9
         samplesPerUI=100
         amplitude=0.5
-        wf=si.prbs.PseudoRandomWaveform(7,bitrate,amplitude,risetime,bitrate*samplesPerUI)
+        delay=0.
+        wf=si.prbs.PseudoRandomWaveform(7,bitrate,amplitude,risetime,delay,bitrate*samplesPerUI)
         self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
     def testPRBS9Waveform(self):
         risetime=300e-12
         bitrate=1e9
         samplesPerUI=10
         amplitude=0.5
-        wf=si.prbs.PseudoRandomWaveform(9,bitrate,amplitude,risetime,bitrate*samplesPerUI)
+        delay=0.
+        wf=si.prbs.PseudoRandomWaveform(9,bitrate,amplitude,risetime,delay,bitrate*samplesPerUI)
         self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
     def testPRBS11Waveform(self):
         risetime=300e-12
         bitrate=1e9
         samplesPerUI=10
         amplitude=0.5
-        wf=si.prbs.PseudoRandomWaveform(11,bitrate,amplitude,risetime,bitrate*samplesPerUI)
+        delay=0.
+        wf=si.prbs.PseudoRandomWaveform(11,bitrate,amplitude,risetime,delay,bitrate*samplesPerUI)
         self.WaveformRegressionChecker(wf,self.NameForTest()+'.txt')
 
 if __name__ == "__main__":
